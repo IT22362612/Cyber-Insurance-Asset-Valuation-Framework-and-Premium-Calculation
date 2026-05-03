@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIAVF | Cyber Insurance Asset Valuation Framework</title>
+<style>
+:root {
+  --bg: #060e1a;
+  --bg2: #0b1828;
+  --bg3: #0f2035;
+  --accent: #00c8f0;
+  --accent2: #0077cc;
+  --green: #00e88a;
+  --purple: #9b6dff;
+  --amber: #f0a500;
+  --red: #ff5a5a;
+  --text: #ddeeff;
+  --muted: #7aa4c0;
+  --border: rgba(0,200,240,0.12);
+  --card: rgba(11,24,40,0.9);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,200,240,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,240,0.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(6,14,26,0.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-size:.82rem;font-weight:700;letter-spacing:.08em;
+  color:var(--accent);text-transform:uppercase;text-decoration:none;
+}
+.logo-box{
+  width:34px;height:34px;border:1.5px solid var(--accent);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+}
+.logo-box svg{width:18px;height:18px;color:var(--accent);}
+.nav-right{display:flex;align-items:center;gap:1.5rem;}
+.nav-right a{
+  color:var(--muted);text-decoration:none;font-size:.82rem;
+  letter-spacing:.04em;transition:color .2s;
+}
+.nav-right a:hover{color:var(--accent);}
+
+/* dropdown */
+.nav-dropdown{position:relative;}
+.nav-dropdown > a{
+  display:flex;align-items:center;gap:5px;cursor:pointer;
+}
+.nav-dropdown > a svg{width:12px;height:12px;transition:transform .2s;}
+.nav-dropdown:hover > a svg{transform:rotate(180deg);}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 12px);left:50%;
+  transform:translateX(-50%);
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:.5rem 0;
+  min-width:160px;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .2s,visibility .2s;
+  z-index:300;
+}
+.nav-dropdown:hover .dropdown-menu{opacity:1;visibility:visible;pointer-events:all;}
+.dropdown-menu a{
+  display:block;padding:.55rem 1.1rem;
+  font-size:.8rem;color:var(--muted);
+  transition:color .2s,background .2s;
+}
+.dropdown-menu a:hover{color:var(--accent);background:rgba(0,200,240,.06);}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  padding:7rem 2rem 4rem;
+  position:relative;z-index:1;
+}
+.hero-glow{
+  position:absolute;top:40%;left:50%;
+  transform:translate(-50%,-50%);
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(0,200,240,.055) 0%,transparent 68%);
+  pointer-events:none;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:.35rem 1rem;
+  border:1px solid rgba(0,200,240,.35);border-radius:20px;
+  font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:1.6rem;
+  animation:fadeUp .6s ease both;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+.hero h1{
+  font-size:clamp(1.9rem,5vw,3.5rem);
+  font-weight:800;letter-spacing:-.025em;line-height:1.12;
+  margin-bottom:1rem;
+  animation:fadeUp .65s .08s ease both;
+}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero-sub{
+  font-size:1.05rem;color:var(--muted);
+  max-width:640px;margin:0 auto 1rem;
+  animation:fadeUp .65s .15s ease both;
+}
+.hero-desc{
+  font-size:.92rem;color:rgba(122,164,192,.8);
+  max-width:580px;margin:0 auto 2.5rem;
+  animation:fadeUp .65s .22s ease both;
+}
+.hero-btns{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp .65s .3s ease both;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:.8rem 1.8rem;border-radius:7px;font-size:.88rem;font-weight:700;
+  text-decoration:none;transition:all .2s;cursor:pointer;border:none;
+  letter-spacing:.03em;
+}
+.btn-primary{background:var(--accent);color:#060e1a;}
+.btn-primary:hover{background:#33d6f5;transform:translateY(-2px);}
+.btn-outline{
+  background:transparent;color:var(--accent);
+  border:1.5px solid rgba(0,200,240,.4);
+}
+.btn-outline:hover{border-color:var(--accent);background:rgba(0,200,240,.07);transform:translateY(-2px);}
+
+.hero-meta{
+  display:flex;justify-content:center;gap:3rem;
+  margin-top:4rem;padding-top:2rem;
+  border-top:1px solid var(--border);
+  animation:fadeUp .7s .4s ease both;
+}
+.hero-meta-item{text-align:center;}
+.hero-meta-num{font-size:1.7rem;font-weight:800;color:var(--accent);display:block;}
+.hero-meta-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+
+/* ─── SECTION BASE ─── */
+.sec{
+  position:relative;z-index:1;
+  padding:5.5rem 2rem;
+  max-width:1140px;margin:0 auto;
+}
+.sec-full{
+  position:relative;z-index:1;
+  padding:5.5rem 2rem;
+  background:rgba(0,200,240,.018);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.sec-inner{max-width:1140px;margin:0 auto;}
+.tag-label{
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.5rem;
+}
+.sec-title{
+  font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;
+  letter-spacing:-.02em;margin-bottom:.8rem;
+}
+.sec-title em{font-style:normal;color:var(--accent);}
+.rule{width:44px;height:2px;background:var(--accent);border-radius:2px;margin-bottom:2rem;}
+
+/* ─── HOME SECTION ─── */
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+.home-text p{color:var(--muted);margin-bottom:1rem;font-size:.94rem;}
+.home-text strong{color:var(--text);}
+.info-cards{display:flex;flex-direction:column;gap:1rem;}
+.info-card{
+  display:flex;gap:1rem;align-items:flex-start;
+  padding:1rem 1.2rem;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;
+  transition:border-color .2s;
+}
+.info-card:hover{border-color:rgba(0,200,240,.35);}
+.ic-icon{
+  width:38px;height:38px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,200,240,.1);
+}
+.ic-icon svg{width:18px;height:18px;color:var(--accent);}
+.ic-body strong{display:block;font-size:.88rem;margin-bottom:.2rem;}
+.ic-body span{font-size:.8rem;color:var(--muted);}
+
+/* ─── DOMAIN TABS ─── */
+.domain-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.dtab{
+  padding:.5rem 1.1rem;border-radius:6px;font-size:.8rem;
+  border:1px solid var(--border);background:transparent;
+  color:var(--muted);cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.dtab.active,.dtab:hover{background:var(--accent);color:#060e1a;border-color:var(--accent);font-weight:700;}
+.domain-panel{display:none;}
+.domain-panel.active{display:block;}
+.domain-panel p{color:var(--muted);font-size:.93rem;margin-bottom:1rem;}
+.domain-panel strong{color:var(--text);}
+.domain-panel ul{list-style:none;padding:0;}
+.domain-panel ul li{
+  padding:.55rem 0 .55rem 1.4rem;
+  border-bottom:1px solid var(--border);
+  font-size:.88rem;color:var(--muted);
+  position:relative;
+}
+.domain-panel ul li::before{
+  content:'›';position:absolute;left:0;color:var(--accent);font-size:1.1rem;
+}
+.domain-panel ul li:last-child{border-bottom:none;}
+.panel-box{
+  padding:1.4rem 1.6rem;
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:1rem;
+}
+.panel-box h4{font-size:.9rem;font-weight:700;margin-bottom:.5rem;}
+.panel-box p{font-size:.85rem;color:var(--muted);}
+
+/* ─── MILESTONES ─── */
+.milestones-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:2rem;}
+.ms-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:1.2rem 1.4rem;
+  display:flex;gap:1rem;align-items:flex-start;
+  transition:border-color .2s,transform .2s;
+}
+.ms-card:hover{border-color:rgba(0,200,240,.35);transform:translateY(-3px);}
+.ms-num{
+  font-size:.68rem;font-weight:700;letter-spacing:.08em;
+  padding:.3rem .7rem;border-radius:20px;flex-shrink:0;margin-top:.2rem;
+}
+.ms-pct-high{background:rgba(0,232,138,.12);color:var(--green);border:1px solid rgba(0,232,138,.25);}
+.ms-pct-mid{background:rgba(0,200,240,.12);color:var(--accent);border:1px solid rgba(0,200,240,.25);}
+.ms-pct-low{background:rgba(155,109,255,.12);color:var(--purple);border:1px solid rgba(155,109,255,.25);}
+.ms-body strong{display:block;font-size:.88rem;font-weight:700;margin-bottom:.25rem;}
+.ms-body span{font-size:.78rem;color:var(--muted);}
+
+/* ─── DOCUMENTS & PRESENTATIONS ─── */
+.docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;}
+.doc-group h4{
+  font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.doc-group h4 svg{width:14px;height:14px;}
+.doc-list{list-style:none;padding:0;}
+.doc-list li{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1rem;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  margin-bottom:.5rem;font-size:.84rem;
+  transition:border-color .2s;
+}
+.doc-list li:hover{border-color:rgba(0,200,240,.35);}
+.doc-name{color:var(--text);}
+.doc-status{font-size:.7rem;padding:.2rem .6rem;border-radius:20px;}
+.status-done{background:rgba(0,232,138,.12);color:var(--green);border:1px solid rgba(0,232,138,.25);}
+.status-pending{background:rgba(240,165,0,.12);color:var(--amber);border:1px solid rgba(240,165,0,.25);}
+.doc-link{
+  font-size:.75rem;color:var(--accent);text-decoration:none;
+  padding:.2rem .6rem;border:1px solid rgba(0,200,240,.3);border-radius:5px;
+  transition:background .2s;
+}
+.doc-link:hover{background:rgba(0,200,240,.1);}
+
+/* ─── TEAM ─── */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:2.5rem;}
+.team-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1.8rem 1.5rem;text-align:center;
+  transition:border-color .25s,transform .2s;
+}
+.team-card:hover{border-color:rgba(0,200,240,.35);transform:translateY(-4px);}
+.avatar{
+  width:68px;height:68px;border-radius:50%;
+  margin:0 auto 1rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;
+}
+.av1{background:rgba(0,200,240,.12);color:var(--accent);border:2px solid rgba(0,200,240,.35);}
+.av2{background:rgba(155,109,255,.12);color:var(--purple);border:2px solid rgba(155,109,255,.35);}
+.av3{background:rgba(0,232,138,.12);color:var(--green);border:2px solid rgba(0,232,138,.35);}
+.av4{background:rgba(240,165,0,.12);color:var(--amber);border:2px solid rgba(240,165,0,.35);}
+.t-name{font-weight:700;font-size:.96rem;margin-bottom:.2rem;}
+.t-role{font-size:.78rem;color:var(--muted);margin-bottom:.8rem;}
+.t-bio{font-size:.78rem;color:rgba(122,164,192,.8);line-height:1.55;text-align:left;}
+
+/* ─── CONTACT ─── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
+.contact-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1.6rem 1.8rem;
+  transition:border-color .2s;
+}
+.contact-card:hover{border-color:rgba(0,200,240,.35);}
+.cc-avatar{
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:800;
+  margin-bottom:1rem;
+}
+.cc-name{font-weight:700;font-size:.95rem;margin-bottom:.3rem;}
+.cc-detail{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--muted);margin-top:.5rem;}
+.cc-detail svg{width:14px;height:14px;flex-shrink:0;color:var(--accent);}
+.cc-detail a{color:var(--accent);text-decoration:none;}
+.cc-detail a:hover{text-decoration:underline;}
+
+/* ─── FOOTER ─── */
+footer{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border);
+  padding:2rem;
+  text-align:center;
+}
+.footer-inner{
+  max-width:1140px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{font-size:.82rem;color:var(--muted);}
+.footer-brand strong{color:var(--accent);}
+.footer-copy{font-size:.76rem;color:rgba(122,164,192,.45);}
+.footer-sliit{display:flex;align-items:center;gap:7px;font-size:.76rem;color:var(--muted);}
+.f-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s,transform .6s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .home-grid,.docs-grid,.contact-grid{grid-template-columns:1fr;}
+  .nav-right a:not(.btn){display:none;}
+}
+@media(max-width:600px){
+  .team-grid{grid-template-columns:1fr;}
+  .hero-meta{gap:1.5rem;}
+  .footer-inner{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#home">
+    <div class="logo-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    CIAVF
+  </a>
+  <div class="nav-right">
+    <a href="#home">Home</a>
+
+    <!-- Domain dropdown -->
+    <div class="nav-dropdown">
+      <a href="#domain">
+        Domain
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="#domain" onclick="switchTab('lit')">Literature Survey</a>
+        <a href="#domain" onclick="switchTab('gap')">Research Gap</a>
+        <a href="#domain" onclick="switchTab('prob')">Research Problem</a>
+        <a href="#domain" onclick="switchTab('obj')">Objectives</a>
+        <a href="#domain" onclick="switchTab('meth')">Methodology</a>
+        <a href="#domain" onclick="switchTab('tech')">Technologies</a>
+      </div>
+    </div>
+
+    <a href="#milestones">Milestones</a>
+    <a href="#documents">Documents</a>
+    <a href="#presentations">Presentations</a>
+    <a href="#team">About Us</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<div class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div>
+    <div class="badge"><div class="badge-dot"></div>SLIIT · BSc (Hons) Cyber Security · 2026</div>
+    <h1>Cyber Insurance <em>Asset Valuation</em><br>Framework &amp; Premium Calculation<br>for Sri Lankan Banks</h1>
+    <p class="hero-sub">A research-driven model to evaluate digital assets and calculate cyber insurance premiums for the banking sector.</p>
+    <p class="hero-desc">This research develops a framework for Asset Valuation and Premium Calculation along with Risk Exposure modelling, specifically targeting the Sri Lankan banking sector to address the lack of standardized methodologies for quantifying digital asset value in cyber risk contexts.</p>
+    <div class="hero-btns">
+      <a href="#domain" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Explore Research
+      </a>
+      <a href="#team" class="btn btn-outline">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Meet the Team
+      </a>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="hero-meta-num">4</span><span class="hero-meta-lbl">Researchers</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">3</span><span class="hero-meta-lbl">Asset Categories</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">LK</span><span class="hero-meta-lbl">Banking Sector</span></div>
+      <div class="hero-meta-item"><span class="hero-meta-num">2026</span><span class="hero-meta-lbl">Research Year</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ HOME / ABOUT ═══════════════════════════════ -->
+<section class="sec" id="home-desc">
+  <div class="home-grid">
+    <div class="home-text reveal">
+      <p class="tag-label">About the Research</p>
+      <h2 class="sec-title">Bridging the Gap in<br><em>Cyber Risk Pricing</em></h2>
+      <div class="rule"></div>
+      <p>The rapid digital transformation of the banking sector has significantly increased reliance on digital assets, making them a critical component of organizational value. However, the growing frequency and sophistication of cyber threats have exposed financial institutions to substantial risks, particularly concerning data breaches, system downtime, and financial losses.</p>
+      <p>This research focuses on developing a framework for <strong>Asset Valuation and Premium Calculation</strong> along with Risk Exposure modelling. The study specifically targets the banking sector in Sri Lanka, addressing the lack of standardized methodologies for quantifying the value of assets in cyber risk contexts.</p>
+      <p>The proposed solution integrates financial, operational, and risk-based factors to estimate the value and map it to insurance models. Ultimately, this research aims to enhance decision-making in cyber risk management and contribute to the development of a <strong>sustainable cyber insurance ecosystem</strong>.</p>
+    </div>
+    <div class="info-cards reveal">
+      <div class="info-card">
+        <div class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <div class="ic-body"><strong>Hardware Valuation</strong><span>Replacement cost, depreciation &amp; usage-based assessment</span></div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+        <div class="ic-body"><strong>Data Asset Valuation</strong><span>Sensitivity, confidentiality classification &amp; breach impact</span></div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="ic-body"><strong>Software Asset Valuation</strong><span>Income-based, cost-based &amp; risk-adjusted multipliers</span></div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <div class="ic-body"><strong>Risk &amp; Premium Calculation</strong><span>P(Attack) × Financial Impact → Insurance Premium</span></div>
+      </div>
+      <div class="info-card">
+        <div class="ic-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="ic-body"><strong>Layered Risk Analysis</strong><span>Multi-tier approach assessing technical &amp; systemic exposures</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ DOMAIN ═══════════════════════════════ -->
+<div class="sec-full" id="domain">
+  <div class="sec-inner">
+    <div class="reveal">
+      <p class="tag-label">Research Domain</p>
+      <h2 class="sec-title">Academic <em>Foundation</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="domain-tabs reveal">
+      <button class="dtab active" onclick="switchTab('lit')">Literature Survey</button>
+      <button class="dtab" onclick="switchTab('gap')">Research Gap</button>
+      <button class="dtab" onclick="switchTab('prob')">Research Problem</button>
+      <button class="dtab" onclick="switchTab('obj')">Objectives</button>
+      <button class="dtab" onclick="switchTab('meth')">Methodology</button>
+      <button class="dtab" onclick="switchTab('tech')">Technologies</button>
+    </div>
+
+    <!-- Literature Survey -->
+    <div class="domain-panel active" id="panel-lit">
+      <p>The rapid digitization of organizational operations, particularly in the banking sector, has significantly increased exposure to cyber threats. Modern banking systems rely heavily on interconnected platforms and large volumes of sensitive data, making cyber incidents more frequent and impactful. Threats such as ransomware, data breaches, phishing, and system compromises can disrupt business continuity, damage customer trust, and result in substantial financial and regulatory consequences.</p>
+      <p>This trend is also evident in Sri Lanka, where banks and other institutions have experienced notable cyber incidents involving large-scale data exposure. Such events highlight the growing need for robust risk management frameworks to minimize potential losses and organizational damage.</p>
+      <p>While banks implement various security controls to protect their assets, completely preventing cyberattacks remains challenging. As a result, risk management has become essential, offering structured strategies such as risk avoidance, reduction, acceptance, and transfer. Among these, <strong>cyber insurance has emerged as an effective mechanism for transferring financial risk to insurers</strong>.</p>
+      <p>Given the multidimensional nature of cyber risks, effective premium calculation requires a structured evaluation of all asset categories including hardware, software, and data along with overall risk exposure. This study focuses on examining valuation methodologies for these asset categories to support more accurate and reliable cyber insurance premium calculations.</p>
+    </div>
+
+    <!-- Research Gap -->
+    <div class="domain-panel" id="panel-gap">
+      <div class="panel-box">
+        <h4>Limited Regional Research</h4>
+        <p>Cyber insurance research and practical implementations remain limited, especially in developing countries like Sri Lanka. Most existing studies are based on developed regions with advanced cybersecurity infrastructures, which do not fully reflect the regulatory, technological, and operational realities of the Sri Lankan banking sector.</p>
+      </div>
+      <div class="panel-box">
+        <h4>Limitations in Current Approaches</h4>
+        <p>Current premium calculation approaches rely on high-level, generic security parameters and often overlook the importance of asset valuation. These models typically use simplified or static assumptions, despite the constantly evolving nature of cyber threats.</p>
+      </div>
+      <div class="panel-box">
+        <h4>Lack of Structured Mathematical Models</h4>
+        <p>The limited integration of structured mathematical models reduces the accuracy and transparency of premium calculations. There is a clear need for a comprehensive, parameter-driven framework that combines asset valuation with dynamic cyber risk assessment.</p>
+      </div>
+    </div>
+
+    <!-- Research Problem -->
+    <div class="domain-panel" id="panel-prob">
+      <p>Inaccurate cyber insurance premium calculations can lead to significant financial risks and unfair outcomes. Excessively high premiums may discourage banks from obtaining coverage, leaving them fully exposed to cyber threats. Underestimated premiums can result in insufficient risk transfer, increasing the likelihood of financial loss.</p>
+      <p>The problem is structured into four key components: hardware valuation, software valuation, data valuation, and risk exposure modelling. Several challenges currently limit the effectiveness of cyber insurance models:</p>
+      <ul>
+        <li>The absence of a standardized and widely accepted model for premium calculation</li>
+        <li>Inadequate asset valuation approaches, particularly for data one of the most valuable yet least understood assets</li>
+        <li>Lack of proper data classification prior to valuation, leading to inaccurate or uniform valuation of diverse data types</li>
+        <li>Insufficient incorporation of security-related parameters, resulting in limited assessment of risk factors</li>
+        <li>Minimal consideration of local context most existing models are designed for global markets</li>
+        <li>Reliance on static models that fail to adapt to the dynamic nature of cyber threats</li>
+        <li>Limited use of structured mathematical models for both asset valuation and premium calculation</li>
+      </ul>
+    </div>
+
+    <!-- Objectives -->
+    <div class="domain-panel" id="panel-obj">
+      <div class="panel-box">
+        <h4>Main Objective</h4>
+        <p>To develop a fair and accurate cyber insurance premium calculation model integrated with asset valuation for the banking sector. The study aims to incorporate security-related parameters, quantify the value of organizational assets, and establish a mathematical model or set of equations for calculating premium values in a structured and consistent manner.</p>
+      </div>
+      <p style="margin-bottom:.8rem;font-size:.9rem;font-weight:700;color:var(--text);">Specific Objectives</p>
+      <ul>
+        <li>Identify existing models used for data valuation and cyber insurance premium calculation, along with their limitations</li>
+        <li>Understand and analyze the business processes of the banking sector in Sri Lanka</li>
+        <li>Identify the types of assets owned by banks in Sri Lanka and classify them in a structured manner</li>
+        <li>Develop a classification scheme for data assets based on sensitivity and importance</li>
+        <li>Define appropriate criteria for valuing each category of data assets</li>
+        <li>Assess and quantify potential risks associated with each data category</li>
+        <li>Develop mathematical equations to determine asset values and calculate insurance premiums</li>
+        <li>Validate the proposed model through expert evaluation to ensure accuracy, practicality, and alignment with industry requirements</li>
+      </ul>
+    </div>
+
+    <!-- Methodology -->
+    <div class="domain-panel" id="panel-meth">
+      <p>The overall system framework consists of four key components: hardware valuation, software valuation, data valuation, and risk exposure identification. This study follows a structured and research-driven approach to develop an integrated framework.</p>
+      <p>An extensive review of academic literature, industry reports, and relevant standards was conducted to identify gaps and limitations in existing valuation and premium calculation models.</p>
+      <div class="panel-box">
+        <h4>Asset Classification</h4>
+        <p>To address the lack of standardized asset classification, relevant asset types within the banking sector were identified through analysis of publicly available banking information. This was validated using a questionnaire distributed among professionals in the Sri Lankan banking sector.</p>
+      </div>
+      <div class="panel-box">
+        <h4>Quantitative Model Development</h4>
+        <p>Based on the classification, quantitative models were developed to determine the value of each asset category. These calculated values are then used as inputs for the cyber insurance premium calculation model, incorporating security-related parameters to adjust premiums according to the organization's security posture.</p>
+      </div>
+      <div class="panel-box">
+        <h4>Regulatory Integration</h4>
+        <p>Key parameters and regulatory considerations were derived from the Personal Data Protection Act No. 9 of Sri Lanka and Business Continuity Management System guidelines. The proposed parameters were validated through consultations with IT auditors.</p>
+      </div>
+    </div>
+
+    <!-- Technologies -->
+    <div class="domain-panel" id="panel-tech">
+      <div class="panel-box">
+        <h4>Model-Driven Design Approach</h4>
+        <p>This research adopts a model-driven design approach rather than relying on specific software tools or technologies. The focus is on the conceptual development of a cyber insurance premium calculation framework through extensive research and analysis.</p>
+      </div>
+      <div class="panel-box">
+        <h4>Research Methodology</h4>
+        <p>Parameters were identified and derived through comprehensive literature reviews, expert consultations with IT auditors in the Sri Lankan banking sector, questionnaire-based data collection, and analysis of regulatory frameworks including the Personal Data Protection Act No. 9 of Sri Lanka.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MILESTONES ═══════════════════════════════ -->
+<section class="sec" id="milestones">
+  <div class="reveal">
+    <p class="tag-label">Project Timeline</p>
+    <h2 class="sec-title">Research <em>Milestones</em></h2>
+    <div class="rule"></div>
+  </div>
+  <div class="milestones-grid">
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">6%</div>
+      <div class="ms-body"><strong>Proposal Presentation</strong><span>September 8th, 2025</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">6%</div>
+      <div class="ms-body"><strong>Proposal Report</strong><span>August 30th, 2025</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-mid">15%</div>
+      <div class="ms-body"><strong>Progress Presentation 1</strong><span>January 5th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-high">18%</div>
+      <div class="ms-body"><strong>Progress Presentation 2</strong><span>March 9th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-mid">15%</div>
+      <div class="ms-body"><strong>Final Individual Report</strong><span>April 26th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">4%</div>
+      <div class="ms-body"><strong>Final Group Report</strong><span>April 26th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-mid">10%</div>
+      <div class="ms-body"><strong>Final Presentation</strong><span>May 6th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-mid">10%</div>
+      <div class="ms-body"><strong>Viva</strong><span>May 6th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">2%</div>
+      <div class="ms-body"><strong>Website</strong><span>May 6th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-mid">10%</div>
+      <div class="ms-body"><strong>Research Paper</strong><span>May 8th, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">2%</div>
+      <div class="ms-body"><strong>Check Lists</strong><span>Jan 11 &amp; Apr 30, 2026</span></div>
+    </div>
+    <div class="ms-card reveal">
+      <div class="ms-num ms-pct-low">2%</div>
+      <div class="ms-body"><strong>Log Book</strong><span>May 6th, 2026</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ DOCUMENTS ═══════════════════════════════ -->
+<div class="sec-full" id="documents">
+  <div class="sec-inner">
+    <div class="reveal">
+      <p class="tag-label">Research Outputs</p>
+      <h2 class="sec-title">Documents &amp; <em>Presentations</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="docs-grid reveal">
+      <div class="doc-group">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Documents
+        </h4>
+        <ul class="doc-list">
+          <li><span class="doc-name">Proposal Report</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Progress Report 1</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Progress Report 2</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Final Individual Report</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Final Group Report</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Research Paper</span><span class="doc-status status-pending">Pending</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+          <li><span class="doc-name">Log Book</span><span class="doc-status status-pending">Pending</span><a href="https://courseweb.sliit.lk/" class="doc-link">View</a></li>
+        </ul>
+      </div>
+      <div class="doc-group" id="presentations">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Presentations
+        </h4>
+        <ul class="doc-list">
+          <li><span class="doc-name">Proposal Presentation</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">Slides</a></li>
+          <li><span class="doc-name">Progress Presentation 1</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">Slides</a></li>
+          <li><span class="doc-name">Progress Presentation 2</span><span class="doc-status status-done">Completed</span><a href="https://courseweb.sliit.lk/" class="doc-link">Slides</a></li>
+          <li><span class="doc-name">Final Presentation</span><span class="doc-status status-pending">Pending</span><a href="https://courseweb.sliit.lk/" class="doc-link">Slides</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TEAM ═══════════════════════════════ -->
+<section class="sec" id="team">
+  <div class="reveal">
+    <p class="tag-label">About Us</p>
+    <h2 class="sec-title">Meet the <em>Research Team</em></h2>
+    <div class="rule"></div>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="avatar av1">SN</div>
+      <div class="t-name">Senaya Nurandhi Jayawickrama</div>
+      <div class="t-role">Data Asset Valuation · IT22031884</div>
+      <p class="t-bio">A fourth year undergraduate at SLIIT specializing in Cyber Security. Currently an Associate Analyst at Deloitte Sri Lanka within the Technology &amp; Transformation – Cyber Security team, engaged in privacy consultancy, data protection advisory and risk assessments. Her interests include cyber consultancy, risk management and privacy &amp; data protection frameworks.</p>
+    </div>
+    <div class="team-card reveal">
+      <div class="avatar av2">MR</div>
+      <div class="t-name">R.A.D.T. Mojitha Ranasingha</div>
+      <div class="t-role">Risk &amp; Premium Calculation</div>
+      <p class="t-bio">A final year undergraduate in Cybersecurity with a strong passion for information security research. Currently working as an Associate Engineer in Cybersecurity as a SOC Analyst, gaining hands-on experience in threat detection and incident response. His interests include CTF competitions, reverse engineering, cryptography, web security, hardware security and application security.</p>
+    </div>
+    <div class="team-card reveal">
+      <div class="avatar av3">UD</div>
+      <div class="t-name">Udageeth Dias</div>
+      <div class="t-role">Hardware Asset Valuation</div>
+      <p class="t-bio">A final year Cybersecurity undergraduate at SLIIT with a strong interest in information security. Currently working as a SOC Analyst, gaining practical experience in threat monitoring and incident response. He has hands-on experience in full stack development, database systems, and network security, and has led academic security projects.</p>
+    </div>
+    <div class="team-card reveal">
+      <div class="avatar av4">MK</div>
+      <div class="t-name">M. D. R. Kumaranayake</div>
+      <div class="t-role">Software Asset Valuation · IT22362612</div>
+      <p class="t-bio">A final year undergraduate pursuing BSc (Hons) in Information Technology specializing in Cyber Security at SLIIT. Research interests include cyber insurance asset valuation, software security, digital asset risk assessment, and quantitative security modeling. Has practical exposure to cyber security operations, threat monitoring, and cybersecurity research through academic and industry experience.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
+<div class="sec-full" id="contact">
+  <div class="sec-inner">
+    <div class="reveal">
+      <p class="tag-label">Get in Touch</p>
+      <h2 class="sec-title">Contact <em>Us</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-card">
+        <div class="cc-avatar av1">SN</div>
+        <div class="cc-name">Nurandhi J A S</div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:it22031884@my.sliit.lk">it22031884@my.sliit.lk</a>
+        </div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>
+          0777 073 626
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-avatar av4">MK</div>
+        <div class="cc-name">Kumaranayake M D R</div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:it22362612@my.sliit.lk">it22362612@my.sliit.lk</a>
+        </div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>
+          0702 206 126
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-avatar av3">UD</div>
+        <div class="cc-name">Dias M.P.U</div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:IT22603104@my.sliit.lk">IT22603104@my.sliit.lk</a>
+        </div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>
+          071 703 1982
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-avatar av2">MR</div>
+        <div class="cc-name">Ranasinghe T M R</div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:IT225660094@my.sliit.lk">IT225660094@my.sliit.lk</a>
+        </div>
+        <div class="cc-detail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.92z"/></svg>
+          078 190 4889
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-sliit">
+      <div class="f-dot"></div>
+      SLIIT · BSc (Hons) Information Technology, Specializing in Cyber Security
+    </div>
+    <div class="footer-brand"><strong>CIAVF</strong> · Cyber Insurance Asset Valuation Framework</div>
+    <div class="footer-copy">© 2026 SLIIT Research Group. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i*70);
+  });
+},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Domain tabs
+function switchTab(id){
+  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.domain-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const tabs = ['lit','gap','prob','obj','meth','tech'];
+  const idx = tabs.indexOf(id);
+  document.querySelectorAll('.dtab')[idx].classList.add('active');
+}
+document.querySelectorAll('.dtab').forEach((btn,i) => {
+  const ids = ['lit','gap','prob','obj','meth','tech'];
+  btn.onclick = () => switchTab(ids[i]);
+});
+</script>
+</body>
+</html>
